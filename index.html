@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ocean of Magda — Free Public-Domain Books</title>
+  <meta name="description" content="Search ~78,000 free public-domain books from Project Gutenberg. Download EPUB, PDF, Kindle and text, or open an EPUB and read it right in your browser." />
+  <meta name="color-scheme" content="light" />
+  <link rel="preconnect" href="https://gutendex.com" />
+  <link rel="preconnect" href="https://www.gutenberg.org" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ctext y='20' font-size='20'%3E%F0%9F%93%96%3C/text%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 6a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v11a2 2 0 0 0-2-2H4a2 2 0 0 1-2-2z"/>
+          <path d="M22 6a2 2 0 0 0-2-2h-6a2 2 0 0 0-2 2v11a2 2 0 0 1 2-2h6a2 2 0 0 0 2-2z"/>
+          <path d="M2 20c1.8-1 3.6-1 5.4 0 1.8 1 3.4 1 5.2 0M12.4 20c1.8-1 3.4-1 5.2 0 1.4.8 2.8.9 4.4.2"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h1>Ocean of Magda</h1>
+        <span class="subtitle">Free public-domain library · Project Gutenberg</span>
+      </div>
+    </div>
+    <div class="top-actions">
+      <button id="openEpubBtn" class="btn btn-primary btn-sm">📖 Open an EPUB to read</button>
+    </div>
+  </header>
+
+  <main class="view active">
+    <form id="searchForm" class="search-row" autocomplete="off">
+      <div class="search-box">
+        <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>
+        </svg>
+        <input id="searchInput" type="search" placeholder="Search by title, author, or subject — e.g. “Jane Austen”, “Sherlock Holmes”, “philosophy”" />
+      </div>
+      <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+
+    <div class="filters">
+      <div class="seg" id="sortSeg">
+        <button class="seg-btn active" data-sort="popular" title="Most-downloaded — bestsellers &amp; trending">🔥 Popular</button>
+        <button class="seg-btn" data-sort="descending" title="Recently added to Project Gutenberg">🆕 New arrivals</button>
+      </div>
+      <select id="langSelect" class="mini-select" title="Language">
+        <option value="">🌍 All languages</option>
+        <option value="en">English</option>
+        <option value="fr">French</option>
+        <option value="de">German</option>
+        <option value="es">Spanish</option>
+        <option value="it">Italian</option>
+        <option value="pt">Portuguese</option>
+        <option value="nl">Dutch</option>
+        <option value="la">Latin</option>
+        <option value="el">Greek</option>
+        <option value="ru">Russian</option>
+        <option value="zh">Chinese</option>
+        <option value="ja">Japanese</option>
+        <option value="fi">Finnish</option>
+        <option value="sv">Swedish</option>
+        <option value="eo">Esperanto</option>
+      </select>
+    </div>
+
+    <div class="cat-row" id="catRow">
+      <button class="cat active" data-topic="">All</button>
+      <button class="cat" data-topic="fiction">Fiction</button>
+      <button class="cat" data-topic="adventure">Adventure</button>
+      <button class="cat" data-topic="mystery detective">Mystery</button>
+      <button class="cat" data-topic="science fiction">Sci-Fi</button>
+      <button class="cat" data-topic="fantasy">Fantasy</button>
+      <button class="cat" data-topic="love romance">Romance</button>
+      <button class="cat" data-topic="horror">Horror</button>
+      <button class="cat" data-topic="history">History</button>
+      <button class="cat" data-topic="biography">Biography</button>
+      <button class="cat" data-topic="poetry">Poetry</button>
+      <button class="cat" data-topic="drama">Drama</button>
+      <button class="cat" data-topic="philosophy">Philosophy</button>
+      <button class="cat" data-topic="children">Children</button>
+      <button class="cat" data-topic="humor">Humor</button>
+      <button class="cat" data-topic="fairy tales">Fairy tales</button>
+    </div>
+
+    <p class="hint" id="resultMeta">Showing the most popular books. Search for anything to narrow it down.</p>
+    <p class="note-line">Downloads come straight from Project Gutenberg. To read in your browser with themes &amp; progress, download an EPUB, then hit <b>“Open an EPUB to read.”</b></p>
+
+    <section id="results" class="grid"></section>
+
+    <div class="center">
+      <button id="loadMore" class="btn btn-ghost hidden">Load more</button>
+    </div>
+  </main>
+
+  <input type="file" id="epubFile" accept=".epub,application/epub+zip" hidden />
+
+  <!-- READER -->
+  <div id="reader" class="reader hidden" data-theme="light" data-mode="epub" aria-hidden="true">
+    <div class="reader-topbar">
+      <button id="readerToc" class="reader-btn" title="Table of contents">☰ Contents</button>
+      <div class="reader-title" id="readerTitle"></div>
+      <div class="reader-tools">
+        <button id="readerSettingsBtn" class="reader-btn" title="Display settings">Aa</button>
+        <button id="readerClose" class="reader-btn" title="Close reader">✕ Close</button>
+      </div>
+      <div id="readerSettings" class="reader-settings hidden">
+        <div class="rs-group">
+          <label>Reading light</label>
+          <div class="rs-themes" id="rsThemes">
+            <button data-theme="light" class="rs-theme light">Light</button>
+            <button data-theme="sepia" class="rs-theme sepia">Sepia</button>
+            <button data-theme="night" class="rs-theme night">Night</button>
+          </div>
+        </div>
+        <div class="rs-group">
+          <label>Text size</label>
+          <div class="rs-stepper"><button id="rsSizeDown">A−</button><span id="rsSizeVal">100%</span><button id="rsSizeUp">A+</button></div>
+        </div>
+        <div class="rs-group">
+          <label>Line spacing</label>
+          <div class="rs-stepper"><button id="rsLineDown">−</button><span id="rsLineVal">1.6</span><button id="rsLineUp">+</button></div>
+        </div>
+        <div class="rs-group">
+          <label>Font</label>
+          <div class="seg" id="rsFont">
+            <button data-font="serif" class="seg-btn active">Serif</button>
+            <button data-font="sans" class="seg-btn">Sans</button>
+          </div>
+        </div>
+        <div class="rs-group">
+          <label>Layout</label>
+          <div class="seg" id="rsFlow">
+            <button data-flow="paginated" class="seg-btn active">Paged</button>
+            <button data-flow="scrolled-doc" class="seg-btn">Scroll</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reader-stage">
+      <button class="reader-nav prev" id="readerPrev" aria-label="Previous page">‹</button>
+      <div id="readerViewport" class="reader-viewport"></div>
+      <button class="reader-nav next" id="readerNext" aria-label="Next page">›</button>
+      <aside id="readerTocPanel" class="reader-toc hidden"></aside>
+    </div>
+
+    <div class="reader-foot">
+      <input type="range" id="readerScrub" class="reader-scrub" min="0" max="100" value="0" step="0.1" disabled />
+      <div class="reader-foot-labels">
+        <span id="readerPercent">0%</span>
+        <span id="readerLoc">Opening…</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Drag-and-drop overlay -->
+  <div id="dropZone" class="dropzone hidden">
+    <div class="dropzone-inner">
+      <div class="dropzone-icon">📖</div>
+      <div class="dropzone-title">Drop your EPUB here to read</div>
+      <div class="dropzone-sub">It stays on your device — nothing is uploaded.</div>
+    </div>
+  </div>
+
+  <div id="toasts" class="toasts"></div>
+
+  <script src="vendor/jszip.min.js"></script>
+  <script src="vendor/epub.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
